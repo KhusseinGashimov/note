@@ -4,8 +4,14 @@ import 'package:note/notes.dart';
 
 import 'Note.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final noteList = Note.noteList();
 
   @override
@@ -48,7 +54,9 @@ class HomePage extends StatelessWidget {
                     child: ListView(
                       children: [
                         for( Note notee in noteList)
-                          Notes(note: notee)
+                          Notes(note: notee,onNoteChanged: _handleNoteChange,onDeleteNote:
+                              _deleteNoteChange
+                          )
                       ],
                     ),
                   )
@@ -103,5 +111,16 @@ class HomePage extends StatelessWidget {
           ],
         )
     );
+  }
+
+  void _handleNoteChange(Note note){
+    setState(() {
+      note.isDone =!note.isDone;
+    });
+  }
+  void _deleteNoteChange(String id){
+    setState(() {
+      noteList.removeWhere((item) =>item.id==id);
+    });
   }
 }

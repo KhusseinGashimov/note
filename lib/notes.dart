@@ -4,15 +4,19 @@ import 'package:note/constant.dart';
 
 class Notes extends StatelessWidget {
   final Note note;
+  final onNoteChanged;
+  final onDeleteNote;
 
-  const Notes({Key? key, required this.note}) : super(key: key);
+  const Notes({Key? key, required this.note, this.onNoteChanged, this.onDeleteNote}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: 20),
       child: ListTile(
-        onTap: () {},
+        onTap: () {
+          onNoteChanged(note);
+        },
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         tileColor: Colors.white,
         contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
@@ -40,7 +44,9 @@ class Notes extends StatelessWidget {
             color: Colors.white,
             iconSize: 18,
             icon: Icon(Icons.delete),
-            onPressed: () {},
+            onPressed: () {
+              onDeleteNote(note.id);
+            },
           ),
         ),
       ),
