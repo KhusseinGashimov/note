@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:note/constant.dart';
+import 'package:note/dialog.dart';
 import 'package:note/notes.dart';
 
 import 'Note.dart';
@@ -30,6 +31,10 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           backgroundColor: Colors.purple,
           elevation: 0,
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: createNewTask,
+          child: Icon(Icons.add),
         ),
         body: Stack(
           children: [
@@ -72,73 +77,15 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Row(
-                children: [
-                  Expanded(
-                      child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                    margin: const EdgeInsets.only(bottom: 20, right: 20, left: 20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: const [
-                        BoxShadow(
-                            color: Colors.grey,
-                            offset: Offset(0, 0),
-                            blurRadius: 10,
-                            spreadRadius: 0),
-                      ],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: TextField(
-                      controller: _noteController,
-                      decoration: const InputDecoration(
-                        hintText: "Добавить заметку",
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  )),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 20, right: 20),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          _addNoteController(_noteController.text);
-                        },
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: tdBlue,
-                            minimumSize: const Size(60, 60),
-                            elevation: 10),
-                        child: const Text(
-                          '+',
-                          style: TextStyle(
-                              fontSize: 50, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            )
           ],
         ));
   }
 
-  void _addNoteController(String note) {
-    setState(() {
-      noteList.add(Note(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          noteName: note));
-    });
-  }
 
   void _handleNoteChange(Note note) {
     setState(() {
       note.isDone = !note.isDone;
     });
-    _noteController.clear();
   }
 
   void _runFilter(String enteredKey) {
@@ -155,6 +102,29 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _foundNote =results;
     });
+  }
+  void createNewTask() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return DialogBox(
+          controller: _noteController,
+          onSave: saveNewTask,
+          onCancel: () => Navigator.of(context).pop(),
+        );
+      },
+    );
+  }
+  void saveNewTask() {
+    setState(() {
+      setState(() {
+        noteList.add(Note(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            noteName: _noteController.text));
+        _noteController.clear();
+      });
+    });
+    Navigator.of(context).pop();
   }
 
   void _deleteNoteChange(String id) {
