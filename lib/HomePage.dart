@@ -9,12 +9,39 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: tdBGColor,
       appBar: AppBar(
-        backgroundColor: tdBGColor,
+        backgroundColor: Colors.purple,
         elevation: 0,
       ),
       body: Container(
-        child: Text("123"),
-      ),
+        padding: EdgeInsets.symmetric(
+            vertical: 15,
+            horizontal: 15),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30)
+              ),
+              child: const TextField(
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.all(0),
+                  prefixIcon:Icon(Icons.search,color: tdBlack,size: 20,),
+                  prefixIconConstraints: BoxConstraints(
+                    maxHeight: 20,
+                    minWidth: 25
+                  ),
+                  border: InputBorder.none,
+                  hintText: "Search",
+                  hintStyle: TextStyle(color:tdGrey)
+                ),
+              ),
+            ),
+            ListView()
+          ],
+        ),
+      )
     );
   }
 }
