@@ -13,7 +13,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final noteList = Note.noteList();
+  List<Note> _foundNote = [];
+  final _noteController = TextEditingController();
 
+
+  @override
+  void initState() {
+    _foundNote = noteList;
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,38 +33,38 @@ class _HomePageState extends State<HomePage> {
         body: Stack(
           children: [
             Container(
-              padding: EdgeInsets.symmetric(
-                  vertical: 15,
-                  horizontal: 15),
+              padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
               child: Column(
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(30)
-                    ),
-                    child: const TextField(
+                        borderRadius: BorderRadius.circular(30)),
+                    child: TextField(
+                      onChanged: (value)=>_runFilter(value),
                       decoration: InputDecoration(
                           contentPadding: EdgeInsets.all(0),
-                          prefixIcon: Icon(Icons.search, color: tdBlack, size: 20,),
-                          prefixIconConstraints: BoxConstraints(
-                              maxHeight: 20,
-                              minWidth: 25
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: tdBlack,
+                            size: 20,
                           ),
+                          prefixIconConstraints:
+                              BoxConstraints(maxHeight: 20, minWidth: 25),
                           border: InputBorder.none,
                           hintText: "Search",
-                          hintStyle: TextStyle(color: tdGrey)
-                      ),
+                          hintStyle: TextStyle(color: tdGrey)),
                     ),
                   ),
                   Expanded(
                     child: ListView(
                       children: [
-                        for( Note notee in noteList)
-                          Notes(note: notee,onNoteChanged: _handleNoteChange,onDeleteNote:
-                              _deleteNoteChange
-                          )
+                        for (Note notee in _foundNote)
+                          Notes(
+                              note: notee,
+                              onNoteChanged: _handleNoteChange,
+                              onDeleteNote: _deleteNoteChange)
                       ],
                     ),
                   )
@@ -67,21 +75,23 @@ class _HomePageState extends State<HomePage> {
               alignment: Alignment.bottomCenter,
               child: Row(
                 children: [
-                  Expanded(child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 15,vertical: 5),
-                    margin: EdgeInsets.only(bottom: 20,right: 20,left: 20),
+                  Expanded(
+                      child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    margin: EdgeInsets.only(bottom: 20, right: 20, left: 20),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      boxShadow: const [BoxShadow(
-                        color: Colors.grey,
-                        offset: Offset(0,0),
-                        blurRadius: 10,
-                        spreadRadius: 0
-                      ),],
+                      boxShadow: const [
+                        BoxShadow(
+                            color: Colors.grey,
+                            offset: Offset(0, 0),
+                            blurRadius: 10,
+                            spreadRadius: 0),
+                      ],
                       borderRadius: BorderRadius.circular(10),
-
                     ),
                     child: TextField(
+                      controller: _noteController,
                       decoration: InputDecoration(
                         hintText: "Добавить заметку",
                         border: InputBorder.none,
@@ -89,19 +99,22 @@ class _HomePageState extends State<HomePage> {
                     ),
                   )),
                   Container(
-                    margin: EdgeInsets.only(bottom: 20,right: 20),
+                    margin: EdgeInsets.only(bottom: 20, right: 20),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: ElevatedButton(
-                        onPressed: (){
-
+                        onPressed: () {
+                          _addNoteController(_noteController.text);
                         },
-                        child: Text('+',style: TextStyle(fontSize: 50,fontWeight: FontWeight.bold),),
-                        style: ElevatedButton.styleFrom(
-                          primary: tdBlue,
-                          minimumSize: Size(60, 60),
-                          elevation: 10
+                        child: Text(
+                          '+',
+                          style: TextStyle(
+                              fontSize: 50, fontWeight: FontWeight.bold),
                         ),
+                        style: ElevatedButton.styleFrom(
+                            primary: tdBlue,
+                            minimumSize: Size(60, 60),
+                            elevation: 10),
                       ),
                     ),
                   )
@@ -109,18 +122,42 @@ class _HomePageState extends State<HomePage> {
               ),
             )
           ],
-        )
-    );
+        ));
   }
 
-  void _handleNoteChange(Note note){
+  void _addNoteController(String note) {
     setState(() {
-      note.isDone =!note.isDone;
+      noteList.add(Note(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          noteName: note));
     });
   }
-  void _deleteNoteChange(String id){
+
+  void _handleNoteChange(Note note) {
     setState(() {
-      noteList.removeWhere((item) =>item.id==id);
+      note.isDone = !note.isDone;
+    });
+    _noteController.clear();
+  }
+
+  void _runFilter(String enteredKey) {
+    List<Note> results = [];
+    if (enteredKey.isEmpty)
+      results = noteList;
+    else
+      results = noteList
+          .where((item) =>
+              item.noteName!.toLowerCase().contains(enteredKey.toLowerCase()))
+          .toList();
+
+    setState(() {
+      _foundNote =results;
+    });
+  }
+
+  void _deleteNoteChange(String id) {
+    setState(() {
+      noteList.removeWhere((item) => item.id == id);
     });
   }
 }
