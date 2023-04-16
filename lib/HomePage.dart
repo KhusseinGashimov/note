@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:note/constant.dart';
 import 'package:note/notes.dart';
@@ -5,7 +6,7 @@ import 'package:note/notes.dart';
 import 'Note.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -33,7 +34,7 @@ class _HomePageState extends State<HomePage> {
         body: Stack(
           children: [
             Container(
-              padding: EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
               child: Column(
                 children: [
                   Container(
@@ -43,7 +44,7 @@ class _HomePageState extends State<HomePage> {
                         borderRadius: BorderRadius.circular(30)),
                     child: TextField(
                       onChanged: (value)=>_runFilter(value),
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           contentPadding: EdgeInsets.all(0),
                           prefixIcon: Icon(
                             Icons.search,
@@ -60,7 +61,7 @@ class _HomePageState extends State<HomePage> {
                   Expanded(
                     child: ListView(
                       children: [
-                        for (Note notee in _foundNote)
+                        for (Note notee in _foundNote.reversed)
                           Notes(
                               note: notee,
                               onNoteChanged: _handleNoteChange,
@@ -77,8 +78,8 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Expanded(
                       child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                    margin: EdgeInsets.only(bottom: 20, right: 20, left: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    margin: const EdgeInsets.only(bottom: 20, right: 20, left: 20),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       boxShadow: const [
@@ -92,29 +93,29 @@ class _HomePageState extends State<HomePage> {
                     ),
                     child: TextField(
                       controller: _noteController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: "Добавить заметку",
                         border: InputBorder.none,
                       ),
                     ),
                   )),
                   Container(
-                    margin: EdgeInsets.only(bottom: 20, right: 20),
+                    margin: const EdgeInsets.only(bottom: 20, right: 20),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: ElevatedButton(
                         onPressed: () {
                           _addNoteController(_noteController.text);
                         },
-                        child: Text(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: tdBlue,
+                            minimumSize: const Size(60, 60),
+                            elevation: 10),
+                        child: const Text(
                           '+',
                           style: TextStyle(
                               fontSize: 50, fontWeight: FontWeight.bold),
                         ),
-                        style: ElevatedButton.styleFrom(
-                            primary: tdBlue,
-                            minimumSize: Size(60, 60),
-                            elevation: 10),
                       ),
                     ),
                   )
@@ -142,13 +143,14 @@ class _HomePageState extends State<HomePage> {
 
   void _runFilter(String enteredKey) {
     List<Note> results = [];
-    if (enteredKey.isEmpty)
+    if (enteredKey.isEmpty) {
       results = noteList;
-    else
+    } else {
       results = noteList
           .where((item) =>
               item.noteName!.toLowerCase().contains(enteredKey.toLowerCase()))
           .toList();
+    }
 
     setState(() {
       _foundNote =results;
