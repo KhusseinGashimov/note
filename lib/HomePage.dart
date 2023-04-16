@@ -63,6 +63,7 @@ class _HomePageState extends State<HomePage> {
                           hintStyle: TextStyle(color: tdGrey)),
                     ),
                   ),
+                  SizedBox(height: 20,),
                   Expanded(
                     child: ListView(
                       children: [
